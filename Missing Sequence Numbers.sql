@@ -10,19 +10,12 @@ CREATE TABLE #table_a (id VARCHAR(5), seq_no INT);
 
 CREATE TABLE #table_b (id VARCHAR(5), seq_no INT);
 
-CREATE INDEX IDX_A_ID ON #TABLE_A (ID)
-CREATE INDEX IDX_A_SEQ ON #TABLE_A (SEQ_NO)
-CREATE INDEX IDX_B_ID ON #TABLE_A (ID)
-CREATE INDEX IDX_B_SEQ ON #TABLE_A (SEQ_NO)
-
 INSERT INTO #table_a
 VALUES ('a', 1), ('a', 2), ('b', 1), ('b', 2), ('b', 3), ('c', 1), ('c', 2), ('c', 3), ('c', 4), ('c', 5), ('c', 6), ('c', 7), ('c', 8), ('d', 1), ('d', 2), ('d', 3), ('d', 4), ('d', 5)
 INSERT INTO #table_b
-VALUES ('a', 1), ('b', 1), ('b', 2), ('b', 3), ('c', 1), ('c', 2), ('c', 3), ('c', 4), ('c', 5), ('c', 6), ('c', 7), ('d', 1), ('d', 2), ('d', 3), ('d', 4), ('d', 5)
+VALUES ('a', 1), ('b', 1), ('b', 2), ('b', 3), ('c', 1), ('c', 2), ('c', 3), ('c', 4), ('c', 5), ('c', 6), ('c', 7)
 
-UPDATE STATISTICS #TABLE_A
-UPDATE STATISTICS #TABLE_B
-
+--super convoluted method
 SELECT a.id table_a_id, a.seq_no table_a_seq, b.id table_b_id, b.seq_no table_b_seq
 FROM (
 	--get id and sequence pair for table_a
@@ -43,7 +36,7 @@ FROM (
 			WHERE a.id = x.id
 			)
 	) a
-LEFT JOIN (
+FULL OUTER JOIN (
 	--get id and sequence pair for table_b
 	SELECT b.id, b.seq_no
 	FROM #table_b b
@@ -64,3 +57,11 @@ LEFT JOIN (
 	) b ON a.id = b.id
 	AND a.seq_no = b.seq_no
 WHERE b.id IS NULL;
+
+--Simpler method found via reddit
+select a.id as 'a_id',a.seq_no as 'a_seq_no',b.id as 'b_id',b.seq_no as 'b_seq_no'
+from #table_a a
+    left outer join #table_b b on a.id = b.id and a.seq_no = b.seq_no
+where 
+	b.id is null
+	and exists (select 1 from #table_b where id = a.id);
