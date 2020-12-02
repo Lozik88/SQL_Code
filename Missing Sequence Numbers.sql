@@ -64,6 +64,3 @@ LEFT JOIN (
 	) b ON a.id = b.id
 	AND a.seq_no = b.seq_no
 WHERE b.id IS NULL;
-
-
-select floor(rand()*101)
