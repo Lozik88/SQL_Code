@@ -10,10 +10,18 @@ CREATE TABLE #table_a (id VARCHAR(5), seq_no INT);
 
 CREATE TABLE #table_b (id VARCHAR(5), seq_no INT);
 
+CREATE INDEX IDX_A_ID ON #TABLE_A (ID)
+CREATE INDEX IDX_A_SEQ ON #TABLE_A (SEQ_NO)
+CREATE INDEX IDX_B_ID ON #TABLE_A (ID)
+CREATE INDEX IDX_B_SEQ ON #TABLE_A (SEQ_NO)
+
 INSERT INTO #table_a
 VALUES ('a', 1), ('a', 2), ('b', 1), ('b', 2), ('b', 3), ('c', 1), ('c', 2), ('c', 3), ('c', 4), ('c', 5), ('c', 6), ('c', 7), ('c', 8), ('d', 1), ('d', 2), ('d', 3), ('d', 4), ('d', 5)
 INSERT INTO #table_b
 VALUES ('a', 1), ('b', 1), ('b', 2), ('b', 3), ('c', 1), ('c', 2), ('c', 3), ('c', 4), ('c', 5), ('c', 6), ('c', 7)
+
+UPDATE STATISTICS #TABLE_A
+UPDATE STATISTICS #TABLE_B
 
 --super convoluted method
 SELECT a.id table_a_id, a.seq_no table_a_seq, b.id table_b_id, b.seq_no table_b_seq
