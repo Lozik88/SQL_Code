@@ -1,0 +1,69 @@
+USE AdventureWorks2017;
+IF OBJECT_ID('CLAIMTRACKER.Comments','U') 
+	IS NOT NULL DROP TABLE ClaimTracker.Comments;
+IF OBJECT_ID('CLAIMTRACKER.Claim_Tracker','U') 
+	IS NOT NULL DROP TABLE ClaimTracker.Claim_Tracker;
+IF OBJECT_ID('CLAIMTRACKER.ANALYTICS','U') 
+	IS NOT NULL DROP TABLE ClaimTracker.Analytics;
+IF OBJECT_ID('CLAIMTRACKER.Id_Systems','U') 
+	IS NOT NULL DROP TABLE ClaimTracker.Id_Systems;
+IF OBJECT_ID('CLAIMTRACKER.Claim_Processing_Systems','U') 
+	IS NOT NULL DROP TABLE ClaimTracker.Claim_Processing_Systems;
+
+CREATE TABLE ClaimTracker.Analytics(
+ID INT NOT NULL PRIMARY KEY IDENTITY(1,1)
+,ANALYTIC_ID VARCHAR(30)
+);
+
+CREATE TABLE ClaimTracker.Id_Systems (
+ID INT NOT NULL PRIMARY KEY IDENTITY(1,1)
+,ID_SYSTEM VARCHAR(15)
+);
+
+CREATE TABLE ClaimTracker.Claim_Processing_Systems (
+ID INT NOT NULL PRIMARY KEY IDENTITY(1,1)
+,CLM_PROC_SYS VARCHAR(15)
+)
+
+CREATE TABLE ClaimTracker.Claim_Tracker (
+ID INT NOT NULL PRIMARY KEY IDENTITY(1,1)
+,USER_ID VARCHAR(15) NOT NULL
+,CLAIM_ID VARCHAR(25) NOT NULL
+,CLM_PROC_SYS_ID INT FOREIGN KEY REFERENCES ClaimTracker.Claim_Processing_Systems (ID)
+,ID_SYSTEM_ID INT FOREIGN KEY REFERENCES ClaimTracker.Id_Systems (ID)
+,ANALYTIC_ID_ID INT FOREIGN KEY REFERENCES ClaimTracker.Analytics (ID)
+,START_TIME DATETIME
+,STOP_TIME DATETIME
+);
+
+CREATE TABLE ClaimTracker.Comments (
+ID INT NOT NULL PRIMARY KEY IDENTITY(1,1)
+,CT_ID INT NOT NULL FOREIGN KEY REFERENCES ClaimTracker.Claim_Tracker (ID)
+,Comment VARCHAR(2000)
+);
+
+GO
+CREATE OR ALTER PROCEDURE ClaimTracker.Get_Analytics
+AS
+    SET NOCOUNT ON;
+begin
+select ID, ANALYTIC_ID from ClaimTracker.Analytics
+end
+
+GO
+
+CREATE OR ALTER PROCEDURE ClaimTracker.Get_ID_Systems
+AS
+    SET NOCOUNT ON;
+begin
+select ID, ID_SYSTEM from ClaimTracker.ID_Systems
+end
+
+go
+
+CREATE OR ALTER PROCEDURE ClaimTracker.Get_Claim_Processing_Systems
+AS
+    SET NOCOUNT ON;
+begin
+select ID, CLM_PROC_SYS from ClaimTracker.Claim_Processing_Systems
+end
